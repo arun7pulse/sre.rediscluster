@@ -1,3 +1,49 @@
+# Redis Cluster Configuration Values
+# ====================================
+# This file provides reference configuration values for the Redis cluster.
+# These values can be used with Helm or as configuration reference.
+#
+# Usage:
+#   helm install my-redis-cluster . -f values.yaml
+#
+# Note: This repository doesn't include a Helm chart yet, but this file
+# serves as a reference for configurable parameters.
+
 ## Redis Cluster settings
 cluster:
+  # Number of Redis pods (should be at least 6 for a proper cluster)
+  # For 3 shards with 1 replica each: 6 nodes
+  # For 3 shards with 2 replicas each: 9 nodes
   nodes: 9
+
+  # Number of primary shards (must be <= nodes/2)
+  shards: 3
+
+  # Redis version
+  image:
+    repository: redis
+    tag: "6.2.6"
+    pullPolicy: IfNotPresent
+
+## Storage configuration
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClass: ""  # Use default storage class if empty
+
+## Resource limits and requests
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "512Mi"
+    cpu: "500m"
+
+## Security settings (recommended for production)
+security:
+  enabled: false
+  password: ""  # Set Redis AUTH password
+  tls:
+    enabled: false
+

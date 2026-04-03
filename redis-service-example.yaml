@@ -1,0 +1,47 @@
+# Alternative Redis Cluster Configuration Example
+# =================================================
+# This file demonstrates an alternative way to configure the Redis cluster
+# with a different replica count and explicit namespace.
+#
+# Key differences from redis-cluster.yaml:
+# - Uses 9 replicas instead of 6
+# - Explicitly sets namespace to 'default'
+# - Minimal configuration for learning purposes
+#
+# Note: This is a reference example only. Use redis-cluster.yaml for full deployment.
+
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis-cluster-alt
+  namespace: default
+spec:
+  serviceName: redis-cluster-service
+  # 9 replicas = 3 shards with 2 replicas each (higher availability)
+  replicas: 9
+  selector:
+    matchLabels:
+      app: redis-cluster-alt
+  template:
+    metadata:
+      labels:
+        app: redis-cluster-alt
+        name: redis-cluster-alt
+    # Pod spec would go here (see redis-cluster.yaml for complete config)
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster-alt
+  namespace: default
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: 6379
+      name: client
+  selector:
+    app: redis-cluster-alt
+

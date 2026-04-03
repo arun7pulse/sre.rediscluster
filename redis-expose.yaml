@@ -1,11 +1,30 @@
+# Redis Cluster External Service Configuration
+# =============================================
+# This file provides an example of exposing the Redis cluster externally.
+#
+# Usage scenarios:
+# - Development: Use NodePort to access Redis from outside the cluster
+# - Production: Use LoadBalancer in cloud environments (AWS ELB, GCP LB, etc.)
+#
+# Note: For production, consider using Ingress with TLS instead of direct exposure.
+# Also enable Redis AUTH and TLS for security.
+
 apiVersion: v1
 kind: Service
 metadata:
-  name: redis-cluster
+  name: redis-cluster-external
+  labels:
+    app: redis-cluster
 spec:
-  type: NodePort # Change to LoadBalancer for cloud environments
+  # Change to LoadBalancer for cloud environments (AWS, GCP, Azure)
+  # LoadBalancer will provision a cloud load balancer automatically
+  type: NodePort
   ports:
   - port: 6379
-    nodePort: 30001 # Optional for NodePort
+    targetPort: 6379
+    # NodePort range: 30000-32767
+    # Remove nodePort to let Kubernetes assign automatically
+    nodePort: 30001
   selector:
-    app: redis
+    app: redis-cluster
+
